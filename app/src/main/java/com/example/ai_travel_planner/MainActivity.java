@@ -54,10 +54,43 @@ public class MainActivity extends AppCompatActivity {
 
         btnGenerate.setOnClickListener(v -> {
 
+            String destination = etDestination.getText().toString().trim();
+            String startDate = etStartDate.getText().toString().trim();
+            String endDate = etEndDate.getText().toString().trim();
+            String travelers = etTravelers.getText().toString().trim();
+            String budget = etBudget.getText().toString().trim();
+
+            if (destination.isEmpty()) {
+                etDestination.setError("Enter Destination");
+                return;
+            }
+
+            if (startDate.isEmpty()) {
+                etStartDate.setError("Select Start Date");
+                return;
+            }
+
+            if (endDate.isEmpty()) {
+                etEndDate.setError("Select End Date");
+                return;
+            }
+
+            if (travelers.isEmpty()) {
+                etTravelers.setError("Enter Number of Travelers");
+                return;
+            }
+
+            if (budget.isEmpty()) {
+                etBudget.setError("Enter Budget");
+                return;
+            }
+
             int selectedId = rgTravelMode.getCheckedRadioButtonId();
 
-            if(selectedId == -1){
-                Toast.makeText(this,"Select Travel Mode",Toast.LENGTH_SHORT).show();
+            if (selectedId == -1) {
+                Toast.makeText(this,
+                        "Select Travel Mode",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -65,11 +98,27 @@ public class MainActivity extends AppCompatActivity {
 
             String travelMode = rb.getText().toString();
 
+            String hotel = spHotel.getSelectedItem().toString();
+
             Toast.makeText(this,
-                    "Generating AI Trip...\nMode : " + travelMode,
-                    Toast.LENGTH_LONG).show();
+                    "Generating AI Trip...",
+                    Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(MainActivity.this,
+                    TripDetailsActivity.class);
+
+            intent.putExtra("destination", destination);
+            intent.putExtra("startDate", startDate);
+            intent.putExtra("endDate", endDate);
+            intent.putExtra("travelers", travelers);
+            intent.putExtra("budget", budget);
+            intent.putExtra("travelMode", travelMode);
+            intent.putExtra("hotel", hotel);
+
+            startActivity(intent);
 
         });
+
 
     }
 
