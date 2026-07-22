@@ -11,10 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class TripDetailsActivity extends AppCompatActivity {
 
-    TextView tvSummary;
+    TextView tvSummary, tvAITrip;
     Button btnMap;
-
-    String destination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,70 +20,69 @@ public class TripDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_details);
 
         tvSummary = findViewById(R.id.tvSummary);
+        tvAITrip = findViewById(R.id.tvAITrip);
         btnMap = findViewById(R.id.btnMap);
 
-        destination = getIntent().getStringExtra("destination");
+        // Receive data from MainActivity
+        String destination = getIntent().getStringExtra("destination");
         String startDate = getIntent().getStringExtra("startDate");
         String endDate = getIntent().getStringExtra("endDate");
         String travelers = getIntent().getStringExtra("travelers");
         String budget = getIntent().getStringExtra("budget");
         String travelMode = getIntent().getStringExtra("travelMode");
         String hotel = getIntent().getStringExtra("hotel");
+        String aiTrip = getIntent().getStringExtra("aiTrip");
 
+        // Trip Summary
         String summary =
-                "🌍 AI Travel Planner\n\n" +
-
-                        "📍 Destination\n" +
-                        destination +
-
-                        "\n\n📅 Start Date\n" +
-                        startDate +
-
-                        "\n\n📅 End Date\n" +
-                        endDate +
-
-                        "\n\n👥 Travelers\n" +
-                        travelers +
-
-                        "\n\n💰 Budget\n₹" +
-                        budget +
-
-                        "\n\n✈ Travel Mode\n" +
-                        travelMode +
-
-                        "\n\n⭐ Hotel Rating\n" +
-                        hotel;
+                "📍 Destination : " + destination +
+                        "\n\n📅 Start Date : " + startDate +
+                        "\n\n📅 End Date : " + endDate +
+                        "\n\n👥 Travelers : " + travelers +
+                        "\n\n💰 Budget : ₹" + budget +
+                        "\n\n✈ Travel Mode : " + travelMode +
+                        "\n\n⭐ Hotel Rating : " + hotel;
 
         tvSummary.setText(summary);
 
+        // Show AI Itinerary
+        if (aiTrip != null && !aiTrip.isEmpty()) {
+            tvAITrip.setText(aiTrip);
+        } else {
+            tvAITrip.setText(
+                    "Day 1\nVisit local attractions\n\n" +
+                            "Day 2\nExplore museums\n\n" +
+                            "Day 3\nShopping and return."
+            );
+        }
+
+        // Google Maps Button
         btnMap.setOnClickListener(v -> {
 
-            Toast.makeText(this,
+            Toast.makeText(
+                    TripDetailsActivity.this,
                     "Opening Google Maps...",
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT
+            ).show();
 
             Uri uri = Uri.parse("geo:0,0?q=" + Uri.encode(destination));
 
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
+            mapIntent.setPackage("com.google.android.apps.maps");
 
-            intent.setPackage("com.google.android.apps.maps");
-
-            if (intent.resolveActivity(getPackageManager()) != null) {
-
-                startActivity(intent);
-
+            if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(mapIntent);
             } else {
 
                 Uri webUri = Uri.parse(
                         "https://www.google.com/maps/search/?api=1&query="
                                 + Uri.encode(destination));
 
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, webUri);
+                Intent browserIntent =
+                        new Intent(Intent.ACTION_VIEW, webUri);
 
                 startActivity(browserIntent);
             }
-
         });
-
     }
 }

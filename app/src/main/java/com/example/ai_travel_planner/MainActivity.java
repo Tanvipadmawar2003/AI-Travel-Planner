@@ -10,19 +10,38 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
-import androidx.activity.EdgeToEdge;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.example.ai_travel_planner.api.ApiClient;
+import com.example.ai_travel_planner.api.GroqService;
+import com.example.ai_travel_planner.model.GroqRequest;
+import com.example.ai_travel_planner.model.GroqResponse;
+
 import java.util.Calendar;
 
+
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
+    private static final String API_KEY = BuildConfig.GROQ_API_KEY;
     EditText etDestination, etStartDate, etEndDate, etTravelers, etBudget;
     RadioGroup rgTravelMode;
     Spinner spHotel;
     Button btnGenerate;
+
+    String aiTrip = "AI itinerary will be shown here.";
+    private Calendar startCalendar = Calendar.getInstance();
 
     String[] hotelRating = {"3 Star", "4 Star", "5 Star"};
     @Override
@@ -60,20 +79,40 @@ public class MainActivity extends AppCompatActivity {
             String travelers = etTravelers.getText().toString().trim();
             String budget = etBudget.getText().toString().trim();
 
+
             if (destination.isEmpty()) {
                 etDestination.setError("Enter Destination");
                 return;
             }
-
             if (startDate.isEmpty()) {
-                etStartDate.setError("Select Start Date");
+                etStartDate.setError("Enter start date");
                 return;
+            }
+            if (endDate.isEmpty()) {
+                etEndDate.setError("Enter End Date");
+                return;
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+            try {
+
+                Date start = sdf.parse(startDate);
+                Date end = sdf.parse(endDate);
+
+                if (end.before(start)) {
+
+                    etEndDate.setError("End Date must be after Start Date");
+                    Toast.makeText(MainActivity.this,
+                            "End Date must be after Start Date",
+                            Toast.LENGTH_LONG).show();
+
+                    return;
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
-            if (endDate.isEmpty()) {
-                etEndDate.setError("Select End Date");
-                return;
-            }
 
             if (travelers.isEmpty()) {
                 etTravelers.setError("Enter Number of Travelers");
@@ -103,26 +142,104 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,
                     "Generating AI Trip...",
                     Toast.LENGTH_SHORT).show();
+            // Create AI Prompt
+            // Create AI Prompt
+            String prompt =
+                    "Create a travel itinerary for " + destination +
+                            " from " + startDate +
+                            " to " + endDate +
+                            ". Number of travelers: " + travelers +
+                            ". Budget: ₹" + budget +
+                            ". Travel mode: " + travelMode +
+                            ". Hotel Rating: " + hotel +
+                            ". Give a detailed day-wise travel plan.";
 
-            Intent intent = new Intent(MainActivity.this,
-                    TripDetailsActivity.class);
+            List<GroqRequest.Message> messages = new ArrayList<>();
 
-            intent.putExtra("destination", destination);
-            intent.putExtra("startDate", startDate);
-            intent.putExtra("endDate", endDate);
-            intent.putExtra("travelers", travelers);
-            intent.putExtra("budget", budget);
-            intent.putExtra("travelMode", travelMode);
-            intent.putExtra("hotel", hotel);
+            messages.add(new GroqRequest.Message(
+                    "user",
+                    prompt
+            ));
 
-            startActivity(intent);
+            GroqRequest request = new GroqRequest(
+                    "llama-3.3-70b-versatile",
+                    messages
+            );
 
-        });
+            GroqService service =
+                    ApiClient.getClient().create(GroqService.class);
 
+            service.generateTrip(
+                    "Bearer " + API_KEY,
+                    request
+            ).enqueue(new Callback<GroqResponse>() {
 
-    }
+                @Override
+                public void onResponse(Call<GroqResponse> call,
+                                       Response<GroqResponse> response) {
 
-    private void showDatePicker(EditText editText){
+                    if (response.isSuccessful()
+                            && response.body() != null
+                            && response.body().choices != null
+                            && !response.body().choices.isEmpty()) {
+
+                        String aiTrip =
+                                response.body()
+                                        .choices
+                                        .get(0)
+                                        .message
+                                        .content;
+
+                        Intent intent = new Intent(MainActivity.this,
+                                TripDetailsActivity.class);
+
+                        intent.putExtra("destination", destination);
+                        intent.putExtra("startDate", startDate);
+                        intent.putExtra("endDate", endDate);
+                        intent.putExtra("travelers", travelers);
+                        intent.putExtra("budget", budget);
+                        intent.putExtra("travelMode", travelMode);
+                        intent.putExtra("hotel", hotel);
+                        intent.putExtra("aiTrip", aiTrip);
+
+                        startActivity(intent);
+
+                    } else {
+
+                        try {
+                            String error = response.errorBody().string();
+
+                            android.util.Log.e("GROQ_ERROR", error);
+
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    error,
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GroqResponse> call,
+                                      Throwable t) {
+
+                    Toast.makeText(
+                            MainActivity.this,
+                            t.getMessage(),
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            }); // enqueue()
+
+        }); // btnGenerate.setOnClickListener()
+
+    } // onCreate()
+
+    private void showDatePicker(EditText editText) {
 
         Calendar calendar = Calendar.getInstance();
 
@@ -130,11 +247,19 @@ public class MainActivity extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog dialog = new DatePickerDialog(this,
+        DatePickerDialog dialog = new DatePickerDialog(
+                this,
                 (view, y, m, d) ->
-                        editText.setText(d + "/" + (m+1) + "/" + y),
-                year,month,day);
+                        editText.setText(d + "/" + (m + 1) + "/" + y),
+                year,
+                month,
+                day
+        );
 
         dialog.show();
     }
-}
+
+} // MainActivity
+
+
+
