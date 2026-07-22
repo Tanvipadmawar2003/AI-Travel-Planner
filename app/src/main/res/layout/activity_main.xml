@@ -146,6 +146,12 @@
                     android:layout_marginTop="20dp"
                     app:cornerRadius="16dp"/>
 
+                <Button
+                    android:id="@+id/btnHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Trip History"/>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

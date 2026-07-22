@@ -3,6 +3,7 @@ package com.example.ai_travel_planner;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -32,6 +33,8 @@ import java.util.Calendar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.example.ai_travel_planner.database.Trip;
+import com.example.ai_travel_planner.database.TripDatabase;
 
 public class MainActivity extends AppCompatActivity {
     private static final String API_KEY = BuildConfig.GROQ_API_KEY;
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     RadioGroup rgTravelMode;
     Spinner spHotel;
     Button btnGenerate;
+    private TripDatabase database;
+    Button btnHistory;
 
     String aiTrip = "AI itinerary will be shown here.";
     private Calendar startCalendar = Calendar.getInstance();
@@ -48,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        database = TripDatabase.getInstance(this);
         etDestination = findViewById(R.id.etDestination);
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
@@ -58,6 +63,17 @@ public class MainActivity extends AppCompatActivity {
         rgTravelMode = findViewById(R.id.rgTravelMode);
         spHotel = findViewById(R.id.spHotel);
         btnGenerate = findViewById(R.id.btnGenerate);
+        btnHistory=findViewById(R.id.btnHistory);
+
+        btnHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, com.example.ai_travel_planner.HistoryActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
@@ -120,7 +136,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (budget.isEmpty()) {
-                etBudget.setError("Enter Budget");
+                etBudget.setError("Enter your travel budget");
+                return;
+            }
+
+            int budgetAmount = Integer.parseInt(budget);
+            int travelerCount = Integer.parseInt(travelers);
+
+// Minimum budget = ₹1000 per traveler
+            int minimumBudget = travelerCount * 1000;
+
+            if (budgetAmount < minimumBudget) {
+
+                etBudget.setError("Budget is too low");
+
+                Toast.makeText(
+                        MainActivity.this,
+                        "Minimum budget for " + travelerCount +
+                                " traveler(s) is ₹" + minimumBudget,
+                        Toast.LENGTH_LONG
+                ).show();
+
                 return;
             }
 
@@ -144,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             // Create AI Prompt
             // Create AI Prompt
+
             String prompt =
                     "Create a travel itinerary for " + destination +
                             " from " + startDate +
@@ -190,6 +227,19 @@ public class MainActivity extends AppCompatActivity {
                                         .message
                                         .content;
 
+                        Trip trip = new Trip(
+                                destination,
+                                startDate,
+                                endDate,
+                                travelers,
+                                budget,
+                                travelMode,
+                                hotel,
+                                aiTrip
+                        );
+
+                        database.tripDao().insertTrip(trip);
+
                         Intent intent = new Intent(MainActivity.this,
                                 TripDetailsActivity.class);
 
@@ -222,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+
 
                 @Override
                 public void onFailure(Call<GroqResponse> call,
