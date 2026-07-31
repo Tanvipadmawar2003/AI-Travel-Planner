@@ -20,6 +20,11 @@ android {
             "GROQ_API_KEY",
             "\"${project.findProperty("GROQ_API_KEY")}\""
         )
+        buildConfigField(
+            "String",
+            "WEATHER_API_KEY",
+            "\"${project.findProperty("WEATHER_API_KEY")}\""
+        )
     }
 
     buildFeatures {

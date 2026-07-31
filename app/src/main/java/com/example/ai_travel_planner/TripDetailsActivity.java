@@ -13,6 +13,10 @@ public class TripDetailsActivity extends AppCompatActivity {
 
     TextView tvSummary, tvAITrip;
     Button btnMap;
+    TextView tvTemperature;
+    TextView tvWeather;
+    TextView tvHumidity;
+    TextView tvWind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +26,10 @@ public class TripDetailsActivity extends AppCompatActivity {
         tvSummary = findViewById(R.id.tvSummary);
         tvAITrip = findViewById(R.id.tvAITrip);
         btnMap = findViewById(R.id.btnMap);
+        tvTemperature = findViewById(R.id.tvTemperature);
+        tvWeather = findViewById(R.id.tvWeather);
+        tvHumidity = findViewById(R.id.tvHumidity);
+        tvWind = findViewById(R.id.tvWind);
 
         // Receive data from MainActivity
         String destination = getIntent().getStringExtra("destination");
@@ -32,6 +40,11 @@ public class TripDetailsActivity extends AppCompatActivity {
         String travelMode = getIntent().getStringExtra("travelMode");
         String hotel = getIntent().getStringExtra("hotel");
         String aiTrip = getIntent().getStringExtra("aiTrip");
+        String temperature = getIntent().getStringExtra("temperature");
+        String weather = getIntent().getStringExtra("weather");
+        String humidity = getIntent().getStringExtra("humidity");
+        String wind = getIntent().getStringExtra("wind");
+
 
         // Trip Summary
         String summary =
@@ -44,6 +57,10 @@ public class TripDetailsActivity extends AppCompatActivity {
                         "\n\n⭐ Hotel Rating : " + hotel;
 
         tvSummary.setText(summary);
+        tvTemperature.setText("🌡 Temperature : " + temperature);
+        tvWeather.setText("☁ Weather : " + weather);
+        tvHumidity.setText("💧 Humidity : " + humidity);
+        tvWind.setText("🌬 Wind : " + wind);
 
         // Show AI Itinerary
         if (aiTrip != null && !aiTrip.isEmpty()) {
