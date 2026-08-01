@@ -25,6 +25,11 @@ android {
             "WEATHER_API_KEY",
             "\"${project.findProperty("WEATHER_API_KEY")}\""
         )
+        buildConfigField(
+            "String",
+            "PLACES_API_KEY",
+            "\"${project.findProperty("PLACES_API_KEY")}\""
+        )
     }
 
     buildFeatures {
