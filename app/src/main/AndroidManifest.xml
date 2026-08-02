@@ -31,6 +31,8 @@
         <activity
             android:name=".NearbyPlacesActivity"
             android:exported="false" />
+        <activity android:name=".ExpenseActivity" />
+        <activity android:name=".ExpenseHistoryActivity" />
     </application>
 
 </manifest>

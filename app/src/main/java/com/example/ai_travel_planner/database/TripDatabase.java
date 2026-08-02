@@ -6,12 +6,21 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Trip.class}, version = 1, exportSchema = false)
+@Database(
+        entities = {
+                Trip.class,
+                Expense.class
+        },
+        version = 2,
+        exportSchema = false
+)
 public abstract class TripDatabase extends RoomDatabase {
 
     private static TripDatabase instance;
 
     public abstract TripDao tripDao();
+
+    public abstract ExpenseDao expenseDao();
 
     public static synchronized TripDatabase getInstance(Context context) {
 
@@ -22,6 +31,7 @@ public abstract class TripDatabase extends RoomDatabase {
                             TripDatabase.class,
                             "trip_database"
                     )
+                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build();
 

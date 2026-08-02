@@ -16,6 +16,7 @@ public class TripDetailsActivity extends AppCompatActivity {
 
     Button btnMap;
     Button btnAttractions, btnRestaurants, btnHotels, btnShopping;
+    Button btnExpense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class TripDetailsActivity extends AppCompatActivity {
         btnRestaurants = findViewById(R.id.btnRestaurants);
         btnHotels = findViewById(R.id.btnHotels);
         btnShopping = findViewById(R.id.btnShopping);
+        btnExpense = findViewById(R.id.btnExpense);
 
         // Receive data from MainActivity
         String destination = getIntent().getStringExtra("destination");
@@ -168,11 +170,25 @@ public class TripDetailsActivity extends AppCompatActivity {
                     destination + " shopping"
             );
         });
+        btnExpense.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    TripDetailsActivity.this,
+                    ExpenseActivity.class
+            );
+
+            // Pass trip information
+            intent.putExtra("budget", budget);
+            intent.putExtra("destination", destination);
+
+            startActivity(intent);
+
+        });
+        /**
+         * Opens a Google Maps search for the given query.
+         */
     }
 
-    /**
-     * Opens a Google Maps search for the given query.
-     */
     private void openGoogleMapsSearch(String query) {
 
         Uri webUri = Uri.parse(
