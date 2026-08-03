@@ -2,48 +2,141 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💰 Budget Dashboard"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:textColor="#1976D2"/>
+
+            <TextView
+                android:id="@+id/tvBudget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trip Budget : ₹0"
+                android:textSize="18sp"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/tvTotalExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Expense : ₹0"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/tvRemainingBudget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remaining Budget : ₹0"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/tvBudgetStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"/>
+
+            <ProgressBar
+                android:id="@+id/progressBudget"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:max="100"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/tvProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0% Used"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📊 Expense Categories"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvFood"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🍔 Food : ₹0"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/tvHotel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🏨 Hotel : ₹0"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/tvTransport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🚕 Transport : ₹0"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/tvShopping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🛍 Shopping : ₹0"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/tvTicket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🎫 Ticket : ₹0"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/tvOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📦 Other : ₹0"
+        android:layout_marginStart="20dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerExpense"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <TextView
-        android:id="@+id/tvTotalExpense"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total Expense"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_margin="10dp"/>
-
-    <TextView
-        android:id="@+id/tvRemainingBudget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remaining Budget"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_margin="10dp"/>
-
-    <ProgressBar
-        android:id="@+id/progressBudget"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:max="100"
-        android:layout_margin="10dp"/>
-
-    <TextView
-        android:id="@+id/tvProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0%"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_marginStart="10dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"/>
 
 </LinearLayout>
