@@ -38,7 +38,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String API_KEY = BuildConfig.GROQ_API_KEY;
+    private static final String API_KEY =BuildConfig.GROQ_API_KEY;
     private static final String WEATHER_API_KEY =BuildConfig.WEATHER_API_KEY;
 
     private EditText etDestination;

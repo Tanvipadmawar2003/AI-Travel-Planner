@@ -156,6 +156,12 @@
         android:padding="8dp"/>
 
     <Button
+        android:id="@+id/btnExportPdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📄 Export PDF"/>
+
+    <Button
         android:id="@+id/btnAnalytics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

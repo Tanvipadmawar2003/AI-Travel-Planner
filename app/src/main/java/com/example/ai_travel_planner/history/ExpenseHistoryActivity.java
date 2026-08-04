@@ -1,6 +1,9 @@
 package com.example.ai_travel_planner;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
@@ -17,11 +20,14 @@ import com.example.ai_travel_planner.adapter.ExpenseAdapter;
 import com.example.ai_travel_planner.database.Expense;
 import com.example.ai_travel_planner.database.TripDatabase;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 public class ExpenseHistoryActivity extends AppCompatActivity {
 
@@ -41,6 +47,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
     Button btnAnalytics;
     EditText etSearchExpense;
     Spinner spFilterCategory;
+    Button btnExportPdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,8 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
         etSearchExpense = findViewById(R.id.etSearchExpense);
         spFilterCategory =
                 findViewById(R.id.spFilterCategory);
+        btnExportPdf = findViewById(R.id.btnExportPdf);
+
 
 
         recyclerExpense.setLayoutManager(
@@ -182,6 +191,10 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
             }
 
         });
+        btnExportPdf.setOnClickListener(v -> {
+            exportPdf();
+        });
+
         btnAnalytics.setOnClickListener(v -> {
 
             Intent intent = new Intent(
@@ -193,6 +206,125 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
 
         });
     }
+    private void exportPdf(){
+        PdfDocument pdfDocument = new PdfDocument();
+
+        Paint paint = new Paint();
+
+        PdfDocument.PageInfo pageInfo =
+                new PdfDocument.PageInfo.Builder(
+                        595,
+                        842,
+                        1
+                ).create();
+
+        PdfDocument.Page page =
+                pdfDocument.startPage(pageInfo);
+
+        Canvas canvas = page.getCanvas();
+        paint.setTextSize(24);
+
+        canvas.drawText(
+                "AI Travel Planner",
+                180,
+                60,
+                paint
+        );
+
+        paint.setTextSize(18);
+
+        canvas.drawText(
+                "Expense Report",
+                220,
+                100,
+                paint
+        );
+        paint.setTextSize(16);
+
+        canvas.drawText(
+                tvTotalExpense.getText().toString(),
+                40,
+                150,
+                paint
+        );
+
+        canvas.drawText(
+                tvRemainingBudget.getText().toString(),
+                40,
+                180,
+                paint
+        );
+
+        canvas.drawText(
+                tvProgress.getText().toString(),
+                40,
+                210,
+                paint
+        );
+        List<Expense> list =
+                TripDatabase.getInstance(this)
+                        .expenseDao()
+                        .getAllExpenses();
+
+        int y = 270;
+
+        for(Expense e : list){
+
+            canvas.drawText(
+                    e.expenseName,
+                    40,
+                    y,
+                    paint
+            );
+
+            canvas.drawText(
+                    e.category,
+                    250,
+                    y,
+                    paint
+            );
+
+            canvas.drawText(
+                    "₹"+e.amount,
+                    430,
+                    y,
+                    paint
+            );
+
+            y += 30;
+
+        }
+        pdfDocument.finishPage(page);
+        File file = new File(
+                getExternalFilesDir(null),
+                "ExpenseReport.pdf"
+        );
+
+        try{
+
+            FileOutputStream out =
+                    new FileOutputStream(file);
+
+            pdfDocument.writeTo(out);
+
+            out.close();
+
+            pdfDocument.close();
+
+            Toast.makeText(
+                    this,
+                    "PDF Saved:\n"+file.getAbsolutePath(),
+                    Toast.LENGTH_LONG
+            ).show();
+
+        }catch(Exception e){
+
+            e.printStackTrace();
+
+        }
+
+    }
+
 
 
     private void loadExpenseData() {
