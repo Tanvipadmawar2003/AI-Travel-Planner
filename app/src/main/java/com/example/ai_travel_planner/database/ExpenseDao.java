@@ -15,6 +15,8 @@ public interface ExpenseDao {
 
     @Delete
     void deleteExpense(Expense expense);
+    @androidx.room.Update
+    void updateExpense(Expense expense);
 
     @Query("SELECT * FROM expense_table")
     List<Expense> getAllExpenses();

@@ -1,5 +1,6 @@
 package com.example.ai_travel_planner.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ai_travel_planner.EditExpenseActivity;
 import com.example.ai_travel_planner.R;
 import com.example.ai_travel_planner.database.Expense;
 import com.example.ai_travel_planner.database.TripDatabase;
@@ -20,6 +22,7 @@ public class ExpenseAdapter
         extends RecyclerView.Adapter<ExpenseAdapter.ViewHolder> {
 
     List<Expense> expenseList;
+
 
     // Callback Interface
     public interface OnExpenseDeleted {
@@ -41,6 +44,7 @@ public class ExpenseAdapter
     public ViewHolder onCreateViewHolder(
             @NonNull ViewGroup parent,
             int viewType) {
+
 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(
@@ -68,6 +72,22 @@ public class ExpenseAdapter
         holder.tvAmount.setText(
                 "₹ " + expense.amount
         );
+        holder.btnEdit.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    holder.itemView.getContext(),
+                    EditExpenseActivity.class
+            );
+
+            intent.putExtra("id", expense.id);
+            intent.putExtra("name", expense.expenseName);
+            intent.putExtra("category", expense.category);
+            intent.putExtra("amount", expense.amount);
+            intent.putExtra("destination", expense.destination);
+
+            holder.itemView.getContext().startActivity(intent);
+
+        });
 
         holder.btnDelete.setOnClickListener(v -> {
 
@@ -117,6 +137,7 @@ public class ExpenseAdapter
         TextView tvCategory;
         TextView tvAmount;
         Button btnDelete;
+        Button btnEdit;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -132,6 +153,7 @@ public class ExpenseAdapter
 
             btnDelete =
                     itemView.findViewById(R.id.btnDelete);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
         }
     }
 }

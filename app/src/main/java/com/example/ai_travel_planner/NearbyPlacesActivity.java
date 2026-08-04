@@ -32,7 +32,7 @@ public class NearbyPlacesActivity extends AppCompatActivity {
     private final List<Place> placeList = new ArrayList<>();
 
     private static final String PLACES_API_KEY =
-            BuildConfig.PLACES_API_KEY;
+           BuildConfig.PLACES_API_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
