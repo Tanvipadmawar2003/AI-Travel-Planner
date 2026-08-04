@@ -1,6 +1,8 @@
 package com.example.ai_travel_planner;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,6 +31,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
     TextView tvShopping;
     TextView tvTicket;
     TextView tvOther;
+    Button btnAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +53,25 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
         tvTicket = findViewById(R.id.tvTicket);
         tvOther = findViewById(R.id.tvOther);
         tvOther = findViewById(R.id.tvOther);
+        btnAnalytics =
+                findViewById(R.id.btnAnalytics);
 
         recyclerExpense.setLayoutManager(
                 new LinearLayoutManager(this)
         );
 
+
         loadExpenseData();
+        btnAnalytics.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    ExpenseHistoryActivity.this,
+                    ExpenseAnalyticsActivity.class
+            );
+
+            startActivity(intent);
+
+        });
     }
 
     private void loadExpenseData() {
