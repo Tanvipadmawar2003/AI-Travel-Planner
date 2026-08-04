@@ -132,6 +132,8 @@
         android:text="📦 Other : ₹0"
         android:layout_marginStart="20dp"/>
 
+
+
     <EditText
         android:id="@+id/etSearchExpense"
         android:layout_width="match_parent"
@@ -140,6 +142,11 @@
         android:hint="Search Expense"
         android:drawableStart="@android:drawable/ic_menu_search"
         android:padding="12dp"/>
+    <Spinner
+        android:id="@+id/spFilterCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerExpense"

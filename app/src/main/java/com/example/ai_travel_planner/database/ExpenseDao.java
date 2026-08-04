@@ -50,4 +50,7 @@ public interface ExpenseDao {
     @Query("SELECT * FROM expense_table WHERE expenseName LIKE '%' || :keyword || '%'")
     List<Expense> searchExpense(String keyword);
 
+    @Query("SELECT * FROM expense_table WHERE category = :category")
+    List<Expense> getExpenseByCategory(String category);
+
 }

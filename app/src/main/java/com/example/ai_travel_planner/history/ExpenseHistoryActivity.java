@@ -3,6 +3,7 @@ package com.example.ai_travel_planner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -18,6 +19,9 @@ import com.example.ai_travel_planner.database.TripDatabase;
 
 import java.util.List;
 import android.text.TextWatcher;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.AdapterView;
 
 public class ExpenseHistoryActivity extends AppCompatActivity {
 
@@ -36,6 +40,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
     TextView tvOther;
     Button btnAnalytics;
     EditText etSearchExpense;
+    Spinner spFilterCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +65,80 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
         btnAnalytics =
                 findViewById(R.id.btnAnalytics);
         etSearchExpense = findViewById(R.id.etSearchExpense);
+        spFilterCategory =
+                findViewById(R.id.spFilterCategory);
+
 
         recyclerExpense.setLayoutManager(
                 new LinearLayoutManager(this)
         );
+        String[] categories = {
+                "All",
+                "Food",
+                "Hotel",
+                "Transport",
+                "Shopping",
+                "Ticket",
+                "Other"
+        };
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        categories
+                );
 
-
+        spFilterCategory.setAdapter(adapter);
         loadExpenseData();
+        spFilterCategory.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(
+                            AdapterView<?> parent,
+                            View view,
+                            int position,
+                            long id) {
+
+                        List<Expense> expenseList;
+
+                        if(categories[position].equals("All")){
+
+                            expenseList =
+                                    TripDatabase.getInstance(
+                                                    ExpenseHistoryActivity.this)
+                                            .expenseDao()
+                                            .getAllExpenses();
+
+                        }else{
+
+                            expenseList =
+                                    TripDatabase.getInstance(
+                                                    ExpenseHistoryActivity.this)
+                                            .expenseDao()
+                                            .getExpenseByCategory(
+                                                    categories[position]);
+
+                        }
+
+                        ExpenseAdapter adapter =
+                                new ExpenseAdapter(
+                                        expenseList,
+                                        ExpenseHistoryActivity.this::updateBudgetSummary
+                                );
+
+                        recyclerExpense.setAdapter(adapter);
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(
+                            AdapterView<?> parent) {
+
+                    }
+
+                });
+
         etSearchExpense.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -122,6 +194,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
         });
     }
 
+
     private void loadExpenseData() {
 
         List<Expense> expenseList =
@@ -141,6 +214,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
         updateCategorySummary();
 
     }
+
 
 
     private void updateBudgetSummary() {
