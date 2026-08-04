@@ -2,7 +2,9 @@ package com.example.ai_travel_planner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.example.ai_travel_planner.database.Expense;
 import com.example.ai_travel_planner.database.TripDatabase;
 
 import java.util.List;
+import android.text.TextWatcher;
 
 public class ExpenseHistoryActivity extends AppCompatActivity {
 
@@ -32,6 +35,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
     TextView tvTicket;
     TextView tvOther;
     Button btnAnalytics;
+    EditText etSearchExpense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
         tvOther = findViewById(R.id.tvOther);
         btnAnalytics =
                 findViewById(R.id.btnAnalytics);
+        etSearchExpense = findViewById(R.id.etSearchExpense);
 
         recyclerExpense.setLayoutManager(
                 new LinearLayoutManager(this)
@@ -62,6 +67,49 @@ public class ExpenseHistoryActivity extends AppCompatActivity {
 
 
         loadExpenseData();
+        etSearchExpense.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(
+                    CharSequence s,
+                    int start,
+                    int count,
+                    int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(
+                    CharSequence s,
+                    int start,
+                    int before,
+                    int count) {
+
+                List<Expense> list =
+                        TripDatabase.getInstance(
+                                        ExpenseHistoryActivity.this)
+                                .expenseDao()
+                                .searchExpense(
+                                        s.toString()
+                                );
+
+                ExpenseAdapter adapter =
+                        new ExpenseAdapter(
+                                list,
+                                ExpenseHistoryActivity.this::updateBudgetSummary
+                        );
+
+                recyclerExpense.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void afterTextChanged(
+                    Editable s) {
+
+            }
+
+        });
         btnAnalytics.setOnClickListener(v -> {
 
             Intent intent = new Intent(

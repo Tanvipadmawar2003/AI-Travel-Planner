@@ -47,4 +47,7 @@ public interface ExpenseDao {
     @Query("SELECT SUM(amount) FROM expense_table WHERE category='Other'")
     double getOtherExpense();
 
+    @Query("SELECT * FROM expense_table WHERE expenseName LIKE '%' || :keyword || '%'")
+    List<Expense> searchExpense(String keyword);
+
 }
