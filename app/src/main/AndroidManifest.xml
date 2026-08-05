@@ -36,6 +36,7 @@
         <activity
             android:name=".ExpenseAnalyticsActivity"/>
         <activity android:name=".EditExpenseActivity"/>
+        <activity android:name=".EditTripActivity"/>
     </application>
 
 </manifest>
